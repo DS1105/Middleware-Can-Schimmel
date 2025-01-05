@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '/Users/seracan/MT/Middleware-Can-Schimmel/.env' });
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -139,16 +139,17 @@ app.delete('/api/shoppingItems/:id', async (req, res) => {
   }
 });
 
-// Graceful Shutdown
-process.on('SIGINT', async () => {
-  logtail.info('Server wird heruntergefahren...');
+
+// Graceful Shutdown - SIGINT und SIGTERM behandeln
+process.on('SIGTERM', async () => {
+  logtail.info('SIGTERM empfangen. Server wird heruntergefahren...');
   try {
-    await client.close();
-    logtail.info('MongoDB-Verbindung geschlossen');
+    await client.close(); // MongoDB-Verbindung schließen
+    logtail.info('MongoDB-Verbindung erfolgreich geschlossen');
   } catch (error) {
     logtail.error('Fehler beim Schließen der MongoDB-Verbindung', { error: error.message });
   }
-  process.exit();
+  process.exit(0); // Erfolgreich beenden
 });
 
 // Server starten
