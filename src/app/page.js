@@ -14,15 +14,23 @@ export default function ShoppingItems() {
   const BASE_URL =
     process.env.REACT_APP_BASE_URL || "http://localhost:5001/api/shoppingItems";
 
+  // Logger-Funktion
+  const log = (level, message, data = {}) => {
+    console[level](`[${level.toUpperCase()}] ${message}`, data);
+  };
+
   // Alle Artikel abrufen
   const fetchItems = async () => {
     try {
       setError("");
+      log("info", "Fetching items...");
       const response = await fetch(BASE_URL);
       const data = await response.json();
       setItems(data);
+      log("info", "Items fetched successfully", { items: data });
     } catch (err) {
       setError("Fehler beim Laden der Artikel");
+      log("error", "Error fetching items", { error: err.message });
     }
   };
 
@@ -30,11 +38,13 @@ export default function ShoppingItems() {
   const addItem = async () => {
     if (!name || amount <= 0) {
       setError("Name und Menge sind erforderlich");
+      log("warn", "Invalid input for adding an item", { name, amount });
       return;
     }
 
     try {
       setError("");
+      log("info", "Adding item...", { name, amount });
       const response = await fetch(BASE_URL, {
         method: "POST",
         headers: {
@@ -43,12 +53,15 @@ export default function ShoppingItems() {
         body: JSON.stringify({ name, amount }),
       });
 
-      fetchItems(); // Liste neu laden
-      setName("");
-      setAmount(0);
       
+        fetchItems(); // Liste neu laden
+        setName("");
+        setAmount(0);
+        log("info", "Item added successfully", { name, amount });
+     
     } catch (err) {
       setError("Fehler beim Hinzufügen des Artikels");
+      log("error", "Error adding item", { error: err.message });
     }
   };
 
@@ -56,10 +69,12 @@ export default function ShoppingItems() {
   const updateItem = async () => {
     if (!editId || !editName || editAmount <= 0) {
       setError("Ungültige Eingabe für Aktualisierung");
+      log("warn", "Invalid input for updating an item", { editId, editName, editAmount });
       return;
     }
 
     try {
+      log("info", "Updating item...", { editId, editName, editAmount });
       const response = await fetch(`${BASE_URL}/${editId}`, {
         method: "PUT",
         headers: {
@@ -73,11 +88,13 @@ export default function ShoppingItems() {
         setEditId(null);
         setEditName("");
         setEditAmount(0);
+        log("info", "Item updated successfully", { editId });
       } else {
-        setError("Fehler beim Aktualisieren des Artikels");
+        throw new Error("Fehler beim Aktualisieren");
       }
     } catch (err) {
       setError("Fehler beim Aktualisieren des Artikels");
+      log("error", "Error updating item", { error: err.message });
     }
   };
 
@@ -85,17 +102,20 @@ export default function ShoppingItems() {
   const deleteItem = async (id) => {
     try {
       setError("");
+      log("info", "Deleting item...", { id });
       const response = await fetch(`${BASE_URL}/${id}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
         setItems((prevItems) => prevItems.filter((item) => item._id !== id)); // Artikel aus der Liste entfernen
+        log("info", "Item deleted successfully", { id });
       } else {
-        setError("Fehler beim Löschen des Artikels");
+        throw new Error("Fehler beim Löschen");
       }
     } catch (err) {
       setError("Fehler beim Löschen des Artikels");
+      log("error", "Error deleting item", { error: err.message });
     }
   };
 
