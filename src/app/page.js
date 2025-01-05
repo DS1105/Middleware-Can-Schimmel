@@ -10,7 +10,7 @@ export default function ShoppingItems() {
   const [editName, setEditName] = useState('');
   const [editAmount, setEditAmount] = useState(0);
 
-  const BASE_URL = 'http://localhost:5001/api/shoppingItems';
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api/shoppingItems';
 
   // Alle Artikel abrufen
   const fetchItems = async () => {

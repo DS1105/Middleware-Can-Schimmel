@@ -1,14 +1,16 @@
+// server.js
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const port = 5001;
+const port = process.env.PORT || 5001;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// Dummy-Datenbank
+// Dummy-Datenbank - Ersetze dies mit einer echten Datenbank
 let shoppingItems = [
   { name: 'Apples', amount: 5 },
   { name: 'Bananas', amount: 3 },
@@ -62,6 +64,12 @@ app.put('/api/shoppingItems/:name', (req, res) => {
 app.delete('/api/shoppingItems/:name', (req, res) => {
   shoppingItems = shoppingItems.filter((i) => i.name !== req.params.name);
   res.send('Artikel gelöscht');
+});
+
+// Graceful Shutdown
+process.on('SIGINT', () => {
+  console.log('Server wird heruntergefahren...');
+  process.exit();
 });
 
 // Server starten
