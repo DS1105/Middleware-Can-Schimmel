@@ -1,85 +1,101 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export default function ShoppingItems() {
   const [items, setItems] = useState([]);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
-  const [error, setError] = useState('');
-  const [editName, setEditName] = useState('');
+  const [error, setError] = useState("");
+  const [editId, setEditId] = useState(null);
+  const [editName, setEditName] = useState("");
   const [editAmount, setEditAmount] = useState(0);
 
-  const BASE_URL = 'http://localhost:5001/api/shoppingItems';
+  const BASE_URL =
+    process.env.REACT_APP_BASE_URL || "http://localhost:5001/api/shoppingItems";
 
   // Alle Artikel abrufen
   const fetchItems = async () => {
     try {
+      setError("");
       const response = await fetch(BASE_URL);
       const data = await response.json();
       setItems(data);
     } catch (err) {
-      setError('Fehler beim Laden der Artikel');
+      setError("Fehler beim Laden der Artikel");
     }
   };
 
   // Artikel hinzufügen
   const addItem = async () => {
+    if (!name || amount <= 0) {
+      setError("Name und Menge sind erforderlich");
+      return;
+    }
+
     try {
+      setError("");
       const response = await fetch(BASE_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, amount: parseInt(amount) }),
+        body: JSON.stringify({ name, amount }),
       });
-      if (response.ok) {
-        fetchItems();
-        setName('');
-        setAmount(0);
-      } else {
-        setError('Fehler beim Hinzufügen des Artikels');
-      }
+
+      fetchItems(); // Liste neu laden
+      setName("");
+      setAmount(0);
+      
     } catch (err) {
-      setError('Fehler beim Hinzufügen des Artikels');
+      setError("Fehler beim Hinzufügen des Artikels");
     }
   };
 
   // Artikel aktualisieren
-  const updateItem = async (itemName) => {
+  const updateItem = async () => {
+    if (!editId || !editName || editAmount <= 0) {
+      setError("Ungültige Eingabe für Aktualisierung");
+      return;
+    }
+
     try {
-      const response = await fetch(`${BASE_URL}/${itemName}`, {
-        method: 'PUT',
+      const response = await fetch(`${BASE_URL}/${editId}`, {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: editName, amount: parseInt(editAmount) }),
+        body: JSON.stringify({ name: editName, amount: editAmount }),
       });
+
       if (response.ok) {
-        fetchItems();
-        setEditName('');
+        fetchItems(); // Liste neu laden
+        setEditId(null);
+        setEditName("");
         setEditAmount(0);
       } else {
-        setError('Fehler beim Aktualisieren des Artikels');
+        setError("Fehler beim Aktualisieren des Artikels");
       }
     } catch (err) {
-      setError('Fehler beim Aktualisieren des Artikels');
+      setError("Fehler beim Aktualisieren des Artikels");
     }
   };
 
   // Artikel löschen
-  const deleteItem = async (itemName) => {
+  const deleteItem = async (id) => {
     try {
-      const response = await fetch(`${BASE_URL}/${itemName}`, {
-        method: 'DELETE',
+      setError("");
+      const response = await fetch(`${BASE_URL}/${id}`, {
+        method: "DELETE",
       });
+
       if (response.ok) {
-        fetchItems();
+        setItems((prevItems) => prevItems.filter((item) => item._id !== id)); // Artikel aus der Liste entfernen
       } else {
-        setError('Fehler beim Löschen des Artikels');
+        setError("Fehler beim Löschen des Artikels");
       }
     } catch (err) {
-      setError('Fehler beim Löschen des Artikels');
+      setError("Fehler beim Löschen des Artikels");
     }
   };
 
@@ -88,9 +104,9 @@ export default function ShoppingItems() {
   }, []);
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: "20px" }}>
       <h1>Shopping Items</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <div>
         <input
           type="text"
@@ -102,40 +118,44 @@ export default function ShoppingItems() {
           type="number"
           placeholder="Menge"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => setAmount(Number(e.target.value))}
         />
         <button onClick={addItem}>Hinzufügen</button>
       </div>
 
       <ul>
         {items.map((item) => (
-          <li key={item.name}>
+          <li key={item._id}>
             {item.name} - {item.amount}
-            <button onClick={() => deleteItem(item.name)} style={{ marginLeft: '10px' }}>
+            <button
+              onClick={() => deleteItem(item._id)}
+              style={{ marginLeft: "10px" }}
+            >
               Löschen
             </button>
             <button
               onClick={() => {
-                setEditName(item.name);
-                setEditAmount(item.amount);
+                setEditId(item._id);
+                setEditName(item.name); // Name setzen
+                setEditAmount(item.amount); // Menge setzen
               }}
-              style={{ marginLeft: '10px' }}
+              style={{ marginLeft: "10px" }}
             >
               Bearbeiten
             </button>
-            {editName === item.name && (
+            {editId === item._id && (
               <div>
                 <input
                   type="text"
-                  value={editName}
+                  value={editName} // Name bearbeiten
                   onChange={(e) => setEditName(e.target.value)}
                 />
                 <input
                   type="number"
-                  value={editAmount}
-                  onChange={(e) => setEditAmount(e.target.value)}
+                  value={editAmount} // Menge bearbeiten
+                  onChange={(e) => setEditAmount(Number(e.target.value))}
                 />
-                <button onClick={() => updateItem(item.name)}>Speichern</button>
+                <button onClick={updateItem}>Speichern</button>
               </div>
             )}
           </li>
