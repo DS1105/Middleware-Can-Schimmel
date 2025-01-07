@@ -74,11 +74,16 @@
 
 ## 8. Concurrency
 
-### Implementation:
-- Concurrency is enabled through asynchronous request handling (e.g., using `async/await`).
-- Scaling is supported by running multiple instances since no local state is maintained.
 
----
+Scaling of Frontend and Backend:
+
+
+
+### Implementation:
+
+Concurrency is enabled through asynchronous request handling (e.g., using async/await). Scaling is supported by running multiple instances, as no local state is maintained.
+
+Multiple instances of the frontend and backend are run in parallel to enable load balancing, distributing traffic evenly across all instances.The services communicate over a shared network using service names (e.g. "frontend", "backend", "mongo"). The frontend accesses the backend using its service name and port. MongoDB runs as a single instance because it doesn't need to scale and acts as a central data store for other services. In total there are seven instances (three frontend, three backend and one for MongoDB).
 
 ## 9. Disposability
 

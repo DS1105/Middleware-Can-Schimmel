@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BASE_URL=http://backend:5001/api/shoppingItems # Anpassen an Backend-Service in Docker
+    deploy:
+      replicas: 3  # Skalieren der Anzahl der Frontend-Instanzen auf 3
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - PORT=5001
+      - LOGTAIL_SOURCE_TOKEN=your_logtail_token_here
+    deploy:
+      replicas: 3  # Skalieren der Anzahl der Backend-Instanzen auf 3
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:6
+    container_name: mongo-database
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: appdata
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge
