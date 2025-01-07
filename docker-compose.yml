@@ -8,9 +8,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_BASE_URL=http://backend:5001/api/shoppingItems # Anpassen an Backend-Service in Docker
+      - REACT_APP_BASE_URL=http://backend:5001/api/shoppingItems # Adjust to the backend service in Docker
     deploy:
-      replicas: 3  # Skalieren der Anzahl der Frontend-Instanzen auf 3
+      replicas: 3  # Scale the number of frontend instances to 3
     networks:
       - app-network
 
@@ -25,7 +25,7 @@ services:
       - PORT=5001
       - LOGTAIL_SOURCE_TOKEN=your_logtail_token_here
     deploy:
-      replicas: 3  # Skalieren der Anzahl der Backend-Instanzen auf 3
+      replicas: 3  # Scale the number of backend instances to 3
     depends_on:
       - mongo
     networks:

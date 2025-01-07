@@ -1,21 +1,20 @@
-# Verwende das offizielle Node.js-Image
+# Use the official Node.js image
 FROM node:20-slim
 
-# Arbeitsverzeichnis im Container festlegen
+# Set the working directory inside the container
 WORKDIR /app
 
-# Kopiere die package.json und package-lock.json
+# Copy the package.json and package-lock.json
 COPY package*.json ./
 
-# Installiere die Abhängigkeiten
+# Install dependencies
 RUN npm install
 
-# Kopiere den gesamten Quellcode in den Container
+# Copy the entire source code into the container
 COPY . .
 
-# Exponiere den Port 3000
+# Expose port 3000
 EXPOSE 3000
 
-# Setze den Standardbefehl, um die Anwendung zu starten
-CMD ["node", "src/app/page.js"]  # Hier wird der korrekte Pfad zur Seite angepasst
-
+# Set the default command to start the application
+CMD ["node", "src/app/page.js"]  # Adjust the correct path to the page here

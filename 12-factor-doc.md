@@ -83,7 +83,9 @@ Scaling of Frontend and Backend:
 
 Concurrency is enabled through asynchronous request handling (e.g., using async/await). Scaling is supported by running multiple instances, as no local state is maintained.
 
-Multiple instances of the frontend and backend are run in parallel to enable load balancing, distributing traffic evenly across all instances.The services communicate over a shared network using service names (e.g. "frontend", "backend", "mongo"). The frontend accesses the backend using its service name and port. MongoDB runs as a single instance because it doesn't need to scale and acts as a central data store for other services. In total there are seven instances (three frontend, three backend and one for MongoDB).
+To enable load balancing, multiple instances of the front-end and back-end are run in parallel, ensuring that traffic is evenly distributed across all instances. The services communicate over a shared network using predefined service names (e.g. "frontend", "backend", "mongo"). The front-end connects to the back-end using its respective service name and port.
+
+MongoDB runs as a single instance as it does not need to scale and acts as a central data store for the other services. In total, the setup consists of seven instances: three front-end, three back-end, and one MongoDB instance. This architecture was implemented using Docker, and is compatible with Kubernetes for orchestration and improved scalability.
 
 ## 9. Disposability
 
