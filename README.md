@@ -1,47 +1,68 @@
-Here’s your translated guide in English:
+### General Information
+
+#### Frontend
+- **Folder:** `src\app`  
+- **File:** `page.js`
 
 ---
 
-### Front End:
-**Folder:** `src\app`  
-**File:** `page.js`
+#### Backend
+- **Folder:** `shopping-server`  
+- **File:** `server.js`
 
 ---
 
-### Backend:
-**Folder:** `shopping-server`  
-**File:** `server.js`
-
-**Steps:**
-1. Open the **Command Prompt (CMD)** and navigate to the program folder.  
-2. Type `npm run dev` and execute the command.  
-3. Open **VS Code** and navigate to the file using `cd shopping-server` in the `shopping-server` folder.  
-4. Open a new terminal in **VS Code**.  
-5. Execute the command `node test-ds.js`.
+#### Database
+- **Folder:** `shopping-server`  
+- **File:** `test-db.js`
 
 ---
 
-### Kubernetes:
+#### Docker
+- **File:** `docker-compose.yml`  
+- **File:** `Dockerfile`
 
-#### Docker Desktop:
-Make sure that Kubernetes is enabled in Docker Desktop.
+---
+
+#### Kubernetes
+- **Folder:** `kubernetes.files`  
+- **Files:** All files are important
+
+---
+
+### Steps to Start the Program
+
+#### Starting the Application and Database
+1. Open **VS Code**.  
+2. Navigate to the folder `src` and open the file `page.js`. Open a new terminal.  
+3. Run the command: `npm run dev`.  
+4. Navigate to the folder `shopping-server` and open the file `server.js`. Open a new terminal.  
+5. Run the command: `node server.js`.  
+6. Navigate to the folder `shopping-server` and open the file `test-db.js`. Open a new terminal.  
+7. Run the command: `node test-db.js`.
+
+---
+
+### Setting Up Kubernetes
+
+1. **Enable Kubernetes** in Docker Desktop:  
+   - Open **Docker Desktop**.  
+   - Go to **Settings > Kubernetes**.  
+   - Enable the option **Enable Kubernetes**.  
+   - Click **Apply & Restart**.  
+
+---
+
+### Starting Docker and Kubernetes
 
 1. Open **Docker Desktop**.  
-2. Go to **Settings > Kubernetes** and enable the option **Enable Kubernetes**.  
-3. Click **Apply & Restart**.
+2. In **VS Code**, navigate to the `Dockerfile` and open a new terminal.  
+3. Run the command: `docker build -t dockerscds .`.  
+4. Run the command: `docker run -p 3000:3000 dockerscds`.  
+5. Run the command: `kubectl apply -f kubernetes.files`.
 
-#### Docker Image:
-Your Docker image must be created and available. You can either create it locally or store it in a container registry (e.g., Docker Hub).
+---
 
-- The Docker image must be named: **dockerscds**.  
-- Start Docker before Kubernetes.
+### 12-Factor Compliance
 
-#### Start Kubernetes:
-Finally, start Kubernetes by running:  
-```bash
-kubectl apply -f k8s/
-```
-
---- 
-
-Let me know if you need further assistance!
+We maintain a separate document for 12-factor compliance. To review this, open the file `12-factor-doc.md`.
