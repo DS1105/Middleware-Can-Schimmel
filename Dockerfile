@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Set the default command to start the application
-CMD ["node", "src/app/page.js"]  # Adjust the correct path to the page here
+CMD ["node", "src/app/page.js"]  
